@@ -1,0 +1,199 @@
+.container {
+  position: relative;
+  width: 100%;
+  min-height: 340px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: var(--space-xl) 0;
+  overflow: visible;
+}
+
+.compact {
+  min-height: 200px;
+  padding: var(--space-md) 0;
+}
+
+/* ─── Capsule ─────────────────────────────────────────────────────────────── */
+
+.capsuleWrapper {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-sm);
+  z-index: 10;
+}
+
+.capsule {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 12px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 160px;
+  transition: border-color 0.3s ease;
+}
+
+.capsuleLabel {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* ─── Inflow stream ───────────────────────────────────────────────────────── */
+
+.inflowStream {
+  width: 8px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, var(--inflow));
+  border-radius: 4px;
+  position: absolute;
+  top: -68px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* ─── Ripple ──────────────────────────────────────────────────────────────── */
+
+.rippleContainer {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.rippleRing {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 1.5px solid var(--inflow);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+/* ─── Typewriter ──────────────────────────────────────────────────────────── */
+
+.typewriterText {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: var(--space-sm);
+  white-space: nowrap;
+}
+
+.cursor {
+  display: inline-block;
+  animation: cursor-blink 1s step-end infinite;
+}
+
+/* ─── SVG streams ─────────────────────────────────────────────────────────── */
+
+.svgWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+.streamSvg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* ─── Bucket emergence ────────────────────────────────────────────────────── */
+
+.bucketsRow {
+  display: flex;
+  gap: var(--space-md);
+  margin-top: auto;
+  width: 100%;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding: 0 var(--space-lg);
+  position: relative;
+  z-index: 10;
+}
+
+.emergeBucket {
+  background: var(--surface);
+  border: 1.5px solid var(--bucket-color, var(--accent));
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  min-width: 90px;
+  flex: 1;
+  max-width: 160px;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  min-height: 72px;
+}
+
+[data-theme="dark"] .emergeBucket {
+  box-shadow: 0 0 10px rgba(var(--bucket-rgb, var(--accent-rgb)), 0.2);
+}
+
+.emergeBucketLabel {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  position: relative;
+  z-index: 2;
+}
+
+.emergeFill {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  opacity: 0.18;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* ─── Phase label ─────────────────────────────────────────────────────────── */
+
+.phaseLabel {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--text-muted);
+  position: absolute;
+  bottom: var(--space-sm);
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  animation: fade-in 0.3s ease forwards;
+}
+
+@media (max-width: 768px) {
+  .container {
+    min-height: 280px;
+  }
+
+  .bucketsRow {
+    gap: var(--space-sm);
+  }
+
+  .emergeBucket {
+    min-width: 70px;
+    padding: var(--space-sm);
+  }
+}

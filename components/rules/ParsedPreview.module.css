@@ -1,0 +1,109 @@
+.preview {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-top: var(--space-md);
+  animation: fade-in-up 0.25s var(--ease-reveal) forwards;
+}
+
+.previewLabel {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
+  margin-bottom: var(--space-sm);
+}
+
+.tree {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.treeRow {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  animation: slide-in-left 0.2s var(--ease-reveal) forwards;
+}
+
+.connector {
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: -1px;
+  min-width: 28px;
+}
+
+.percent {
+  font-weight: 600;
+  min-width: 36px;
+}
+
+.arrow {
+  color: var(--text-muted);
+}
+
+.bucketLabel {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.token {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+/* Bucket colors */
+.colorSpend  { color: var(--spend); }
+.colorSave   { color: var(--savings); }
+.colorInvest { color: var(--invest); }
+.colorTax    { color: var(--tax); }
+.colorCustom { color: var(--accent); }
+
+/* Warnings */
+.warnings {
+  margin-top: var(--space-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.warning {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--spend);
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.warningIcon {
+  font-size: 11px;
+}
+
+/* Loading dots */
+.loading {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: var(--space-xs) 0;
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  animation: dot-bounce 1s ease-in-out infinite;
+}
+
+@keyframes dot-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40%            { transform: translateY(-4px); opacity: 1; }
+}

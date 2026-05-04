@@ -1,0 +1,181 @@
+.zone {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  width: 100%;
+  max-width: 580px;
+  margin: 0 auto;
+}
+
+/* Amount row */
+.amountRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.amountLabel {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.amountInputWrapper {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  flex-shrink: 0;
+}
+
+.currencySign {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 16px;
+  color: var(--text-muted);
+}
+
+.amountInput {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  outline: none;
+  width: 100px;
+  -moz-appearance: textfield;
+}
+
+.amountInput::placeholder {
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+/* Rule textarea */
+.ruleWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.ruleTextarea {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  resize: vertical;
+  min-height: 88px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  line-height: 1.6;
+}
+
+.ruleTextarea::placeholder {
+  color: var(--text-muted);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.ruleTextarea:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.1);
+}
+
+.inputError {
+  border-color: var(--spend) !important;
+  box-shadow: 0 0 0 3px rgba(var(--spend-rgb), 0.1) !important;
+}
+
+.errorText {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--spend);
+  margin-top: 2px;
+}
+
+/* Simulate button */
+.simulateBtn {
+  width: 100%;
+  height: 48px;
+  background: var(--accent);
+  color: #fff;
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: opacity 0.2s ease, transform 0.1s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+}
+
+.simulateBtn:hover:not(:disabled) {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.simulateBtn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.simulateBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.executing {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: 14px;
+}
+
+.executingDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.8);
+  animation: dot-bounce 1s ease-in-out infinite;
+}
+
+@keyframes dot-bounce {
+  0%, 100% { transform: scale(1); opacity: 0.6; }
+  50%       { transform: scale(1.3); opacity: 1; }
+}
+
+/* Trust line */
+.trustLine {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .amountRow {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .amountInputWrapper {
+    width: 100%;
+  }
+  .amountInput {
+    width: 100%;
+  }
+}
