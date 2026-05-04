@@ -59,6 +59,78 @@
   color: var(--text-primary);
 }
 
+/* ─── Dropdown ─────────────────────────────────────────────────────────────── */
+
+.dropdown {
+  position: relative;
+}
+
+.dropdownTrigger {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: 4px 0;
+  transition: color 0.2s ease;
+}
+
+.dropdownTrigger:hover {
+  color: var(--text-primary);
+}
+
+.dropdownArrow {
+  transition: transform 0.2s ease;
+}
+
+.dropdown:hover .dropdownArrow {
+  transform: rotate(180deg);
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-sm);
+  min-width: 180px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+[data-theme='dark'] .dropdownMenu {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.dropdownLink {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.dropdownLink:hover {
+  background: var(--surface-2);
+  color: var(--text-primary);
+}
+
+/* ─── Right side ───────────────────────────────────────────────────────────── */
+
 .navRight {
   display: flex;
   align-items: center;
@@ -80,6 +152,19 @@
   padding: 4px 10px;
   border-radius: var(--radius-full);
   border: 1px solid var(--border);
+}
+
+.loginLink {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.loginLink:hover {
+  color: var(--text-primary);
 }
 
 .ctaBtn {
@@ -118,10 +203,161 @@
   color: var(--text-secondary);
 }
 
+/* ─── Mobile menu button ───────────────────────────────────────────────────── */
+
+.mobileMenuBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+  padding: var(--space-sm);
+  transition: color 0.2s ease;
+}
+
+.mobileMenuBtn:hover {
+  color: var(--accent);
+}
+
+/* ─── Mobile menu overlay ──────────────────────────────────────────────────── */
+
+.mobileOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 200;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.mobileMenu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 320px;
+  max-width: 100%;
+  background: var(--bg);
+  border-left: 1px solid var(--border);
+  padding: var(--space-xl);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2xl);
+  animation: slideIn 0.3s ease;
+  overflow-y: auto;
+}
+
+@keyframes slideIn {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+.mobileCloseBtn {
+  position: absolute;
+  top: var(--space-xl);
+  right: var(--space-xl);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+  padding: var(--space-sm);
+  transition: color 0.2s ease;
+}
+
+.mobileCloseBtn:hover {
+  color: var(--accent);
+}
+
+.mobileLinks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: var(--space-lg);
+}
+
+.mobileLink {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-decoration: none;
+  padding: var(--space-sm) 0;
+  transition: color 0.2s ease;
+}
+
+.mobileLink:hover {
+  color: var(--accent);
+}
+
+.mobileActions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-top: auto;
+  padding-top: var(--space-xl);
+  border-top: 1px solid var(--border);
+}
+
+.mobileWalletAddress {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--text-muted);
+  background: var(--surface-2);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  text-align: center;
+}
+
+.mobileCtaBtn {
+  font-family: 'Syne', sans-serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: #fff;
+  background: var(--accent);
+  padding: var(--space-md) var(--space-xl);
+  height: 48px;
+  border-radius: var(--radius-lg);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s ease;
+}
+
+.mobileCtaBtn:hover {
+  opacity: 0.88;
+}
+
+.mobileSignOutBtn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: var(--space-sm);
+  transition: color 0.2s ease;
+}
+
+.mobileSignOutBtn:hover {
+  color: var(--text-secondary);
+}
+
+/* ─── Mobile responsive ───────────────────────────────────────────────────── */
+
 @media (max-width: 768px) {
   .navLinks { display: none; }
   .inner { padding: 0 var(--space-lg); }
   .logoText { font-size: 15px; }
   .walletAddress { display: none; }
   .signOutBtn { display: none; }
+  .loginLink { display: none; }
+  .mobileMenuBtn { display: block; }
 }

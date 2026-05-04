@@ -74,8 +74,8 @@ export default function HeroSection() {
   return (
     <section className={styles.hero}>
       <div className={styles.inner}>
-        {/* Text column */}
-        <div className={styles.textCol}>
+        {/* Centered text content */}
+        <div className={styles.textContent}>
           <p className={styles.eyebrow}>PRIVATE FINANCIAL EXECUTION</p>
 
           <h1 className={styles.headline}>
@@ -88,13 +88,15 @@ export default function HeroSection() {
             Define rules once. Every payment is split, allocated, and
             privately executed — the moment funds arrive.
           </p>
+        </div>
 
-          {/* Simulate zone */}
+        {/* Simulate zone */}
+        <div className={styles.simulateWrapper} data-simulate-zone>
           <SimulateZone onSimulate={handleSimulate} isExecuting={isExecuting} />
         </div>
 
-        {/* Animation column */}
-        <div className={styles.animationCol}>
+        {/* Animation showcase */}
+        <div className={styles.animationWrapper}>
           <div className={styles.animationCard}>
             <FlowAnimation
               phase={simulation.phase}
