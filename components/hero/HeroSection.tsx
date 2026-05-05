@@ -81,7 +81,7 @@ export default function HeroSection() {
 
           <h1 className={styles.headline}>
             Your money behaves<br />
-            the way you{' '}
+            the way you<br />
             <span className={styles.accentWord}>planned.</span>
           </h1>
 
