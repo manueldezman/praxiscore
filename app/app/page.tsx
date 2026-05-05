@@ -9,6 +9,7 @@ import SimulateZone from '@/components/hero/SimulateZone';
 import FlowAnimation from '@/components/animation/FlowAnimation';
 import BucketCard from '@/components/buckets/BucketCard';
 import LoginModal from '@/components/auth/LoginModal';
+import TaxPanel from '@/components/tax/TaxPanel';
 import type { AllocationResult, BucketDefinition } from '@/lib/types';
 import { DEFAULT_BUCKETS, BUCKET_COLOR_PALETTE } from '@/lib/types';
 import styles from './AppPage.module.css';
@@ -145,7 +146,10 @@ export default function AppPage() {
           </div>
 
           {activeTab === 'execute' && (
-            <SimulateZone onSimulate={handleSimulate} isExecuting={isExecuting} />
+            <>
+              <SimulateZone onSimulate={handleSimulate} isExecuting={isExecuting} />
+              {session && <TaxPanel />}
+            </>
           )}
 
           {activeTab === 'compliance' && (
