@@ -4,8 +4,10 @@ import type {
   ResolvedAllocation,
   BucketDefinition,
   SupportedToken,
+  RuleCondition,
 } from '../types';
 import { DEFAULT_BUCKETS, BUCKET_COLOR_PALETTE } from '../types';
+import { checkConditions } from './conditionEngine';
 
 // ─── Bucket registry ─────────────────────────────────────────────────────────
 

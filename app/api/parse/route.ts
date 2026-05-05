@@ -8,16 +8,16 @@ export async function POST(req: NextRequest) {
     const { ruleText, inflowAmount, existingBucketLabels } = await req.json();
 
     if (!ruleText?.trim()) {
-      return NextResponse.json({ rules: [], allocationResult: null, source: 'deterministic' });
+      return NextResponse.json({ rules: [], allocationResult: null, source: 'deterministic', conditions: null });
     }
 
-    const { rules, source } = await parseRule(ruleText, existingBucketLabels ?? []);
+    const { rules, source, conditions } = await parseRule(ruleText, existingBucketLabels ?? []);
 
     const allocationResult = inflowAmount > 0
       ? computeAllocations(inflowAmount, rules, DEFAULT_BUCKETS)
       : null;
 
-    return NextResponse.json({ rules, allocationResult, source });
+    return NextResponse.json({ rules, allocationResult, source, conditions });
   } catch (err) {
     console.error('[/api/parse]', err);
     return NextResponse.json({ error: 'Parse failed' }, { status: 500 });

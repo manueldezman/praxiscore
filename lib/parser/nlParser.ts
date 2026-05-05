@@ -1,4 +1,4 @@
-import type { ParsedRule, BucketType, SupportedToken } from '../types';
+import type { ParsedRule, BucketType, SupportedToken, RuleCondition } from '../types';
 import { deterministicParse } from './deterministicParser';
 
 // ─── GLM 4.7 via NVIDIA NIM ──────────────────────────────────────────────────
@@ -37,7 +37,14 @@ Rules:
 - Percentages must not exceed 100 total
 - Only one item may have allocationType "remainder"
 - If the user mentions a custom bucket name (e.g. "emergency", "mortgage", "vacation fund"), use it as the bucket value
-- Never invent buckets not mentioned`;
+- Never invent buckets not mentioned
+
+Condition detection (if present in input):
+- "up to $X" or "max $X" → annualCap
+- "until I reach $X" → annualCap
+- "then redirect to Y" → redirectBucket
+- "pause if below $X" → pauseIfBelow
+- "monthly cap $X" → monthlyCap`;
 
   try {
     const response = await fetch(`${GLM_API_BASE}/chat/completions`, {
@@ -100,24 +107,74 @@ function needsGLM(input: string, deterministicResult: ParsedRule[]): boolean {
   return allAmbiguous || noResult || hasCustomBucket;
 }
 
+// ─── Condition Detection ───────────────────────────────────────────────────────
+
+export interface ParsedConditions {
+  annualCap?: number;
+  monthlyCap?: number;
+  redirectBucket?: string;
+  pauseIfBelow?: number;
+  resetPeriod: 'calendar_year' | 'rolling_12';
+}
+
+function detectConditions(input: string): ParsedConditions {
+  const conditions: ParsedConditions = {
+    resetPeriod: 'calendar_year',
+  };
+
+  const lowerInput = input.toLowerCase();
+
+  // Detect annual cap
+  const annualCapMatch = lowerInput.match(/(?:up to|max|until i reach|limit)\s*\$?(\d+(?:,\d+)*(?:\.\d+)?)/i);
+  if (annualCapMatch) {
+    conditions.annualCap = parseFloat(annualCapMatch[1].replace(/,/g, ''));
+  }
+
+  // Detect monthly cap
+  const monthlyCapMatch = lowerInput.match(/monthly\s*(?:cap|limit|max)\s*\$?(\d+(?:,\d+)*(?:\.\d+)?)/i);
+  if (monthlyCapMatch) {
+    conditions.monthlyCap = parseFloat(monthlyCapMatch[1].replace(/,/g, ''));
+  }
+
+  // Detect redirect bucket
+  const redirectMatch = lowerInput.match(/(?:then|otherwise)\s*(?:redirect|send|move)\s*(?:to|into)\s*(\w+)/i);
+  if (redirectMatch) {
+    conditions.redirectBucket = redirectMatch[1];
+  }
+
+  // Detect pause threshold
+  const pauseMatch = lowerInput.match(/(?:pause|stop)\s*(?:if|when)\s*(?:balance|amount)\s*(?:below|under)\s*\$?(\d+(?:,\d+)*(?:\.\d+)?)/i);
+  if (pauseMatch) {
+    conditions.pauseIfBelow = parseFloat(pauseMatch[1].replace(/,/g, ''));
+  }
+
+  // Detect reset period
+  if (lowerInput.includes('rolling') || lowerInput.includes('12 months')) {
+    conditions.resetPeriod = 'rolling_12';
+  }
+
+  return conditions;
+}
+
 // ─── Public API ───────────────────────────────────────────────────────────────
 
 export async function parseRule(
   input: string,
   existingBucketLabels: string[] = [],
-): Promise<{ rules: ParsedRule[]; source: 'deterministic' | 'glm' }> {
+): Promise<{ rules: ParsedRule[]; source: 'deterministic' | 'glm'; conditions?: ParsedConditions }> {
   if (!input.trim()) {
     return { rules: [], source: 'deterministic' };
   }
 
   const deterministicResult = deterministicParse(input);
+  const conditions = detectConditions(input);
 
   if (needsGLM(input, deterministicResult)) {
     const glmResult = await parseWithGLM(input, existingBucketLabels);
     if (glmResult.length > 0) {
-      return { rules: glmResult, source: 'glm' };
+      return { rules: glmResult, source: 'glm', conditions };
     }
   }
 
-  return { rules: deterministicResult, source: 'deterministic' };
+  return { rules: deterministicResult, source: 'deterministic', conditions };
 }

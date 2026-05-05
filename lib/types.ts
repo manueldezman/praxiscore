@@ -27,6 +27,21 @@ export interface ParsedRule {
   label?: string;
   raw: string;            // original fragment
   ambiguous?: boolean;
+  // New fields for rule engine v2
+  trigger?: 'on_income' | 'scheduled' | 'one_off';
+  cronExpression?: string;
+  runAt?: string;
+  conditions?: RuleCondition;
+  nested?: ParsedRule[];
+  parentRuleId?: string;
+}
+
+export interface RuleCondition {
+  annualCap?: number;
+  monthlyCap?: number;
+  redirectBucket?: string;
+  resetPeriod: 'calendar_year' | 'rolling_12';
+  pauseIfBelow?: number;
 }
 
 export interface AllocationResult {
