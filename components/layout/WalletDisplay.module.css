@@ -1,0 +1,56 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+}
+
+.label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.addressBtn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  text-align: left;
+}
+
+.addressBtn:hover {
+  color: var(--accent);
+}
+
+.copied {
+  font-size: 11px;
+  color: var(--success);
+  margin-left: var(--space-xs);
+}
+
+.solscanLink {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  color: var(--accent);
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.solscanLink:hover {
+  color: var(--accent-hover);
+  text-decoration: underline;
+}

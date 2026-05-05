@@ -10,6 +10,7 @@ import FlowAnimation from '@/components/animation/FlowAnimation';
 import BucketCard from '@/components/buckets/BucketCard';
 import LoginModal from '@/components/auth/LoginModal';
 import TaxPanel from '@/components/tax/TaxPanel';
+import WalletDisplay from '@/components/layout/WalletDisplay';
 import type { AllocationResult, BucketDefinition } from '@/lib/types';
 import { DEFAULT_BUCKETS, BUCKET_COLOR_PALETTE } from '@/lib/types';
 import styles from './AppPage.module.css';
@@ -40,8 +41,6 @@ export default function AppPage() {
   const [loadingCompliance, setLoadingCompliance] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
 
-  const walletPubkey = (session?.user as { walletPublicKey?: string })?.walletPublicKey;
-
   const handleSimulate = useCallback(async (amount: number, allocationResult: AllocationResult) => {
     setExecuting(true);
     startSimulation(amount, allocationResult.rules);
@@ -52,7 +51,7 @@ export default function AppPage() {
         body: JSON.stringify({
           inflowAmount: amount,
           allocations: allocationResult.rules,
-          simulate: !session, // real execution if authed
+          simulate: false, // Always real execution in app
         }),
       });
       const data = await res.json();
@@ -62,7 +61,7 @@ export default function AppPage() {
     } finally {
       setExecuting(false);
     }
-  }, [setExecuting, startSimulation, setExecutionResult, session]);
+  }, [setExecuting, startSimulation, setExecutionResult]);
 
   const loadCompliance = async () => {
     setLoadingCompliance(true);
@@ -108,15 +107,7 @@ export default function AppPage() {
                 </div>
                 <div className={styles.accountInfo}>
                   <p className={styles.accountName}>Your account</p>
-                  {walletPubkey && (
-                    <button
-                      className={styles.walletCopy}
-                      onClick={() => navigator.clipboard.writeText(walletPubkey)}
-                      title="Click to copy"
-                    >
-                      {walletPubkey.slice(0, 6)}...{walletPubkey.slice(-4)}
-                    </button>
-                  )}
+                  <WalletDisplay />
                 </div>
               </>
             ) : (
