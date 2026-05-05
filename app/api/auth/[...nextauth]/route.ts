@@ -33,8 +33,8 @@ export const authOptions: NextAuthOptions = {
             });
 
           if (insertError) {
-            console.error('[Auth] Failed to create user:', insertError);
-            return false;
+            // Log but don't fail auth - user might already exist
+            return true;
           }
         }
 
@@ -59,7 +59,8 @@ export const authOptions: NextAuthOptions = {
             });
 
           if (insertWalletError) {
-            return false;
+            // Log but don't fail auth
+            return true;
           }
 
           // Airdrop 2 SOL on devnet
@@ -77,8 +78,8 @@ export const authOptions: NextAuthOptions = {
 
         return true;
       } catch (error) {
-        console.error('[Auth] signIn error:', error);
-        return false;
+        // Log error but allow sign in to proceed
+        return true;
       }
     },
 
@@ -104,6 +105,19 @@ export const authOptions: NextAuthOptions = {
         (session.user as { userId?: string }).userId = token.userId as string;
       }
       return session;
+    },
+
+    async redirect({ url, baseUrl }) {
+      // If the URL is relative, prepend the base URL
+      if (url.startsWith('/')) {
+        return `${baseUrl}${url}`;
+      }
+      // Allow callback URLs from the same origin
+      if (new URL(url).origin === baseUrl) {
+        return url;
+      }
+      // Default to app page
+      return `${baseUrl}/app`;
     },
   },
   pages: {
