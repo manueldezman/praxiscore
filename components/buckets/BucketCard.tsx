@@ -11,6 +11,9 @@ interface BucketCardProps {
   state: 'empty' | 'filling' | 'settled' | 'revealed' | 're-redacting';
   animationDelay?: number; // ms
   showAmount?: boolean; // If false, show amount directly without redaction
+  showLinkButton?: boolean; // Show "Link wallet" button
+  onLinkWallet?: () => void;
+  walletAddress?: string;
 }
 
 const TOKEN_ICONS: Record<string, string> = {
@@ -21,7 +24,16 @@ const TOKEN_ICONS: Record<string, string> = {
   BTC: '₿',
 };
 
-export default function BucketCard({ bucket, allocation, state, animationDelay = 0, showAmount = true }: BucketCardProps) {
+export default function BucketCard({
+  bucket,
+  allocation,
+  state,
+  animationDelay = 0,
+  showAmount = true,
+  showLinkButton = false,
+  onLinkWallet,
+  walletAddress,
+}: BucketCardProps) {
   const [fillHeight, setFillHeight] = useState(0);
   const [showFill, setShowFill] = useState(false);
   const fillRef = useRef<HTMLDivElement>(null);
@@ -106,6 +118,23 @@ export default function BucketCard({ bucket, allocation, state, animationDelay =
 
       {isSettled && (
         <span className={styles.tapHint}>Tap amount to reveal</span>
+      )}
+
+      {/* Link wallet button */}
+      {showLinkButton && !walletAddress && (
+        <button
+          onClick={onLinkWallet}
+          className={styles.linkBtn}
+        >
+          Link wallet
+        </button>
+      )}
+
+      {/* Wallet address display */}
+      {walletAddress && (
+        <span className={styles.walletAddress}>
+          {walletAddress.slice(0, 8)}...{walletAddress.slice(-8)}
+        </span>
       )}
     </div>
   );

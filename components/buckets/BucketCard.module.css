@@ -107,3 +107,29 @@
   content: '🔒';
   font-size: 10px;
 }
+
+.linkBtn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  margin-top: var(--space-sm);
+}
+
+.linkBtn:hover {
+  background: var(--accent);
+  color: white;
+}
+
+.walletAddress {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: var(--space-sm);
+}
