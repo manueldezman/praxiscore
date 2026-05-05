@@ -25,7 +25,6 @@ export const onIncomeArrival = inngest.createFunction(
       .eq('trigger_type', 'on_income');
 
     if (rulesError || !rules || rules.length === 0) {
-      console.log('[Inngest] No active rules for user:', userId);
       return { success: true, message: 'No rules to execute' };
     }
 
@@ -36,7 +35,6 @@ export const onIncomeArrival = inngest.createFunction(
       const conditionCheck = await checkConditions(rule.id, userId, amount);
 
       if (!conditionCheck.shouldExecute) {
-        console.log(`[Inngest] Rule ${rule.id} skipped: ${conditionCheck.reason}`);
         results.push({
           ruleId: rule.id,
           skipped: true,
@@ -47,7 +45,6 @@ export const onIncomeArrival = inngest.createFunction(
 
       // Execute Cloak disbursement
       // TODO: Integrate with Cloak SDK
-      console.log(`[Inngest] Executing rule ${rule.id}: ${rule.name}`);
 
       // Write execution record
       const now = new Date();
@@ -124,8 +121,6 @@ export const executeNestedRules = inngest.createFunction(
       }
 
       // Execute nested rule
-      console.log(`[Inngest] Executing nested rule ${rule.id}`);
-
       results.push({
         ruleId: rule.id,
         executed: true,

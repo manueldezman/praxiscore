@@ -59,11 +59,8 @@ export const authOptions: NextAuthOptions = {
             });
 
           if (insertWalletError) {
-            console.error('[Auth] Failed to create wallet:', insertWalletError);
             return false;
           }
-
-          console.log(`[Auth] Generated wallet for ${user.id}: ${wallet.publicKey}`);
 
           // Airdrop 2 SOL on devnet
           if (process.env.SOLANA_RPC_URL?.includes('devnet')) {
@@ -72,9 +69,7 @@ export const authOptions: NextAuthOptions = {
               const publicKey = new PublicKey(wallet.publicKey);
               const signature = await connection.requestAirdrop(publicKey, 2 * 1e9); // 2 SOL
               await connection.confirmTransaction(signature);
-              console.log(`[Auth] Airdropped 2 SOL to ${wallet.publicKey}`);
             } catch (airdropError) {
-              console.error('[Auth] Airdrop failed:', airdropError);
               // Don't fail auth if airdrop fails
             }
           }
@@ -133,10 +128,9 @@ export const authOptions: NextAuthOptions = {
         if (!error && (!rules || rules.length === 0)) {
           // User has no rules, they need onboarding
           // This will be handled by middleware or client-side redirect
-          console.log('[Auth] User has no rules, onboarding needed');
         }
       } catch (e) {
-        console.error('[Auth] Failed to check rules:', e);
+        // Failed to check rules, continue anyway
       }
     },
   },

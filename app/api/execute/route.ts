@@ -119,7 +119,6 @@ export async function POST(req: NextRequest) {
       const conditionCheck = await checkConditions(rule.id, userId, inflowAmount);
 
       if (!conditionCheck.shouldExecute) {
-        console.log(`[Execute] Rule ${rule.id} skipped: ${conditionCheck.reason}`);
         results.push({
           bucket: alloc.bucket,
           skipped: true,

@@ -52,13 +52,6 @@ export async function POST(req: NextRequest) {
     //   ? await cloak.partialWithdraw(subAccount.publicKey, destination, amount)
     //   : await cloak.fullWithdraw(subAccount.publicKey, destination);
 
-    console.log('[TaxWithdraw] Withdrawal requested:', {
-      userId,
-      destination,
-      amount,
-      subAccount: subAccount.public_key,
-    });
-
     // Write execution record
     const now = new Date();
     const { error: execError } = await supabaseAdmin.from('rule_executions').insert({
