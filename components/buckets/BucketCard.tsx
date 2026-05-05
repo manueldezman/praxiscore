@@ -10,6 +10,7 @@ interface BucketCardProps {
   allocation?: ResolvedAllocation;
   state: 'empty' | 'filling' | 'settled' | 'revealed' | 're-redacting';
   animationDelay?: number; // ms
+  showAmount?: boolean; // If false, show amount directly without redaction
 }
 
 const TOKEN_ICONS: Record<string, string> = {
@@ -20,7 +21,7 @@ const TOKEN_ICONS: Record<string, string> = {
   BTC: '₿',
 };
 
-export default function BucketCard({ bucket, allocation, state, animationDelay = 0 }: BucketCardProps) {
+export default function BucketCard({ bucket, allocation, state, animationDelay = 0, showAmount = true }: BucketCardProps) {
   const [fillHeight, setFillHeight] = useState(0);
   const [showFill, setShowFill] = useState(false);
   const fillRef = useRef<HTMLDivElement>(null);
@@ -81,10 +82,16 @@ export default function BucketCard({ bucket, allocation, state, animationDelay =
       <div className={styles.amountRow}>
         <span className={styles.tokenIcon}>{TOKEN_ICONS[token] ?? '◎'}</span>
         {isSettled ? (
-          <RedactedValue
-            value={`${amount.toFixed(2)} ${token}`}
-            className={styles.redactedAmount}
-          />
+          showAmount ? (
+            <RedactedValue
+              value={`${amount.toFixed(2)} ${token}`}
+              className={styles.redactedAmount}
+            />
+          ) : (
+            <span className={styles.amount}>
+              {amount.toFixed(2)} {token}
+            </span>
+          )
         ) : (
           <span className={styles.emptyAmount}>
             {isEmpty ? '— —' : '•••.••'}

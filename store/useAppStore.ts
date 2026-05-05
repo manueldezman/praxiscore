@@ -52,7 +52,7 @@ interface AppState {
 
 export const useAppStore = create<AppState>((set, get) => ({
   // Theme
-  theme: 'dark',
+  theme: 'light',
   setTheme: (t) => {
     set({ theme: t });
     document.documentElement.setAttribute('data-theme', t);

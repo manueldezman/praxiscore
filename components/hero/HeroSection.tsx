@@ -37,7 +37,7 @@ export default function HeroSection() {
 
   const { replay } = usePhaseOrchestrator();
 
-  const handleSimulate = useCallback(async (amount: number, allocationResult: AllocationResult) => {
+  const handleSimulate = useCallback(async (amount: number, allocationResult: AllocationResult, currency: 'USDC' | 'SOL') => {
     setExecuting(true);
 
     // Start animation immediately
@@ -51,6 +51,7 @@ export default function HeroSection() {
         body: JSON.stringify({
           inflowAmount: amount,
           allocations: allocationResult.rules,
+          currency,
           simulate: true, // use simulate=true for demo; remove for mainnet
         }),
       });
@@ -124,6 +125,7 @@ export default function HeroSection() {
                     allocation={alloc}
                     state={simulation.phase === 'settle' ? 'filling' : 'settled'}
                     animationDelay={i * 80}
+                    showAmount={false} // Show amounts directly in homepage simulation
                   />
                 );
               })}

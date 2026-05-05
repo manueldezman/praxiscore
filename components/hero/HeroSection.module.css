@@ -41,6 +41,12 @@
   letter-spacing: -0.02em;
 }
 
+@media (min-width: 721px) {
+  .headline {
+    white-space: nowrap;
+  }
+}
+
 .accentWord {
   color: var(--accent);
 }

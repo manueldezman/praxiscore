@@ -8,6 +8,7 @@ import Navbar from '@/components/layout/Navbar';
 import SimulateZone from '@/components/hero/SimulateZone';
 import FlowAnimation from '@/components/animation/FlowAnimation';
 import BucketCard from '@/components/buckets/BucketCard';
+import LoginModal from '@/components/auth/LoginModal';
 import type { AllocationResult, BucketDefinition } from '@/lib/types';
 import { DEFAULT_BUCKETS, BUCKET_COLOR_PALETTE } from '@/lib/types';
 import styles from './AppPage.module.css';
@@ -36,6 +37,7 @@ export default function AppPage() {
   const [activeTab, setActiveTab] = useState<'execute' | 'compliance'>('execute');
   const [complianceData, setComplianceData] = useState<{ summary: string } | null>(null);
   const [loadingCompliance, setLoadingCompliance] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   const walletPubkey = (session?.user as { walletPublicKey?: string })?.walletPublicKey;
 
@@ -119,7 +121,7 @@ export default function AppPage() {
             ) : (
               <div className={styles.signInPrompt}>
                 <p className={styles.signInText}>Sign in for real private execution</p>
-                <button onClick={() => signIn('google')} className={styles.signInBtn}>
+                <button onClick={() => setLoginModalOpen(true)} className={styles.signInBtn}>
                   Continue with Google
                 </button>
               </div>
@@ -238,6 +240,11 @@ export default function AppPage() {
           )}
         </main>
       </div>
+
+      <LoginModal
+        isOpen={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
+      />
     </div>
   );
 }

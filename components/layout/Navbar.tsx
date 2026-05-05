@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { truncateAddress } from '@/lib/wallet/walletService';
+import LoginModal from '@/components/auth/LoginModal';
 import styles from './Navbar.module.css';
 
 interface NavDropdownProps {
@@ -36,6 +37,7 @@ export default function Navbar() {
   const { data: session } = useSession();
   const walletPubkey = (session?.user as { walletPublicKey?: string })?.walletPublicKey;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [loginModalOpen, setLoginModalOpen] = useState(false);
 
   return (
     <>
@@ -90,8 +92,13 @@ export default function Navbar() {
               </div>
             ) : (
               <>
-                <Link href="/app" className={styles.loginLink}>Log in</Link>
-                <button onClick={() => signIn('google')} className={styles.ctaBtn}>
+                <Link href="/app" className={styles.loginLink} onClick={(e) => {
+                  e.preventDefault();
+                  setLoginModalOpen(true);
+                }}>
+                  Log in
+                </Link>
+                <button onClick={() => setLoginModalOpen(true)} className={styles.ctaBtn}>
                   Get Started
                 </button>
               </>
@@ -178,6 +185,11 @@ export default function Navbar() {
           </div>
         </div>
       )}
+
+      <LoginModal
+        isOpen={loginModalOpen}
+        onClose={() => setLoginModalOpen(false)}
+      />
     </>
   );
 }

@@ -12,8 +12,15 @@ const PLACEHOLDERS = [
   '40% spend, 20% save, 20% tax, 20% auto-buy SOL',
 ];
 
+const PRESETS = [
+  { name: '50/30/20 Split', rule: '50% spend, 30% save, 20% invest' },
+  { name: 'Freelancer Default', rule: '30% tax, 40% save, 30% spend' },
+  { name: 'Pay Yourself First', rule: '20% invest, 10% save, 70% spend' },
+  { name: 'Aggressive Saver', rule: '50% save, 20% tax, 30% spend' },
+];
+
 interface SimulateZoneProps {
-  onSimulate: (amount: number, allocations: AllocationResult) => void;
+  onSimulate: (amount: number, allocations: AllocationResult, currency: 'USDC' | 'SOL') => void;
   isExecuting: boolean;
 }
 
@@ -22,6 +29,8 @@ export default function SimulateZone({ onSimulate, isExecuting }: SimulateZonePr
 
   const [amount, setAmount] = useState('');
   const [rule, setRule] = useState('');
+  const [selectedCurrency, setSelectedCurrency] = useState<'USDC' | 'SOL'>('USDC');
+  const [selectedPreset, setSelectedPreset] = useState<string | null>(null);
   const [placeholderIdx, setPlaceholderIdx] = useState(0);
   const [placeholderVisible, setPlaceholderVisible] = useState(true);
   const [isParsingLocal, setIsParsingLocal] = useState(false);
@@ -80,6 +89,7 @@ export default function SimulateZone({ onSimulate, isExecuting }: SimulateZonePr
     setRule(val);
     setRuleText(val);
     setRuleError('');
+    setSelectedPreset(null); // Clear preset selection when manually editing
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       const numAmt = parseFloat(amount.replace(/,/g, '')) || 0;
@@ -98,6 +108,20 @@ export default function SimulateZone({ onSimulate, isExecuting }: SimulateZonePr
       clearTimeout(debounceRef.current);
       debounceRef.current = setTimeout(() => parseRule(rule, num), 300);
     }
+  };
+
+  const handlePresetClick = (presetName: string, presetRule: string) => {
+    setSelectedPreset(presetName);
+    setRule(presetRule);
+    setRuleText(presetRule);
+    setRuleError('');
+    setInflowAmount(5000);
+
+    // Trigger parse immediately
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => {
+      parseRule(presetRule, 5000);
+    }, 100);
   };
 
   const handleSimulate = async () => {
@@ -137,7 +161,7 @@ export default function SimulateZone({ onSimulate, isExecuting }: SimulateZonePr
       return;
     }
 
-    onSimulate(numAmount, allocation);
+    onSimulate(numAmount, allocation, selectedCurrency);
   };
 
   return (
@@ -156,7 +180,20 @@ export default function SimulateZone({ onSimulate, isExecuting }: SimulateZonePr
             className={`${styles.amountInput} ${amountError ? styles.inputError : ''}`}
           />
         </div>
-        <span className={styles.amountLabel}>in SOL</span>
+        <div className={styles.currencySelector}>
+          <button
+            className={`${styles.currencyOption} ${selectedCurrency === 'USDC' ? styles.currencyOptionActive : ''}`}
+            onClick={() => setSelectedCurrency('USDC')}
+          >
+            USDC
+          </button>
+          <button
+            className={`${styles.currencyOption} ${selectedCurrency === 'SOL' ? styles.currencyOptionActive : ''}`}
+            onClick={() => setSelectedCurrency('SOL')}
+          >
+            SOL
+          </button>
+        </div>
       </div>
       {amountError && <p className={styles.errorText}>{amountError}</p>}
 
@@ -180,6 +217,19 @@ export default function SimulateZone({ onSimulate, isExecuting }: SimulateZonePr
           isLoading={isParsingLocal}
         />
       )}
+
+      {/* Preset buttons */}
+      <div className={styles.presets}>
+        {PRESETS.map((preset) => (
+          <button
+            key={preset.name}
+            className={`${styles.presetBtn} ${selectedPreset === preset.name ? styles.presetBtnSelected : ''}`}
+            onClick={() => handlePresetClick(preset.name, preset.rule)}
+          >
+            {preset.name}
+          </button>
+        ))}
+      </div>
 
       {/* Simulate button */}
       <button
