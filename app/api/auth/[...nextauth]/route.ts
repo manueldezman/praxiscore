@@ -1,9 +1,8 @@
 import NextAuth, { type NextAuthOptions } from 'next-auth';
 import GoogleProvider from 'next-auth/providers/google';
 import { generateWallet } from '@/lib/wallet/walletService';
-
-// In-memory wallet store for demo (replace with DB in production)
-const walletStore = new Map<string, { publicKey: string; encryptedSecretKey: string }>();
+import { supabaseAdmin } from '@/lib/db/supabase';
+import { Connection, PublicKey } from '@solana/web3.js';
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -14,20 +13,90 @@ export const authOptions: NextAuthOptions = {
   ],
   callbacks: {
     async signIn({ user }) {
-      // Generate wallet on first sign-in
-      if (user.id && !walletStore.has(user.id)) {
-        const wallet = generateWallet();
-        walletStore.set(user.id, wallet);
-        console.log(`[Auth] Generated wallet for ${user.id}: ${wallet.publicKey}`);
+      try {
+        // Ensure user exists in Supabase
+        const { data: existingUser, error: userError } = await supabaseAdmin
+          .from('users')
+          .select('id')
+          .eq('id', user.id)
+          .single();
+
+        if (userError && userError.code === 'PGRST116') {
+          // User doesn't exist, create them
+          const { error: insertError } = await supabaseAdmin
+            .from('users')
+            .insert({
+              id: user.id,
+              email: user.email ?? '',
+              name: user.name ?? '',
+              image: user.image ?? '',
+            });
+
+          if (insertError) {
+            console.error('[Auth] Failed to create user:', insertError);
+            return false;
+          }
+        }
+
+        // Check if wallet exists
+        const { data: existingWallet, error: walletError } = await supabaseAdmin
+          .from('wallets')
+          .select('public_key')
+          .eq('user_id', user.id)
+          .single();
+
+        if (walletError && walletError.code === 'PGRST116') {
+          // Wallet doesn't exist, generate one
+          const wallet = generateWallet();
+
+          // Encrypt and store wallet
+          const { error: insertWalletError } = await supabaseAdmin
+            .from('wallets')
+            .insert({
+              user_id: user.id,
+              public_key: wallet.publicKey,
+              encrypted_secret_key: wallet.encryptedSecretKey,
+            });
+
+          if (insertWalletError) {
+            console.error('[Auth] Failed to create wallet:', insertWalletError);
+            return false;
+          }
+
+          console.log(`[Auth] Generated wallet for ${user.id}: ${wallet.publicKey}`);
+
+          // Airdrop 2 SOL on devnet
+          if (process.env.SOLANA_RPC_URL?.includes('devnet')) {
+            try {
+              const connection = new Connection(process.env.SOLANA_RPC_URL);
+              const publicKey = new PublicKey(wallet.publicKey);
+              const signature = await connection.requestAirdrop(publicKey, 2 * 1e9); // 2 SOL
+              await connection.confirmTransaction(signature);
+              console.log(`[Auth] Airdropped 2 SOL to ${wallet.publicKey}`);
+            } catch (airdropError) {
+              console.error('[Auth] Airdrop failed:', airdropError);
+              // Don't fail auth if airdrop fails
+            }
+          }
+        }
+
+        return true;
+      } catch (error) {
+        console.error('[Auth] signIn error:', error);
+        return false;
       }
-      return true;
     },
 
     async jwt({ token, user }) {
       if (user?.id) {
-        const wallet = walletStore.get(user.id);
+        const { data: wallet } = await supabaseAdmin
+          .from('wallets')
+          .select('public_key')
+          .eq('user_id', user.id)
+          .single();
+
         if (wallet) {
-          token.walletPublicKey = wallet.publicKey;
+          token.walletPublicKey = wallet.public_key;
           token.userId = user.id;
         }
       }
@@ -52,11 +121,6 @@ export const authOptions: NextAuthOptions = {
   },
   secret: process.env.NEXTAUTH_SECRET ?? 'praxicore-dev-secret',
 };
-
-// Export wallet store accessor for API routes
-export function getWalletForUser(userId: string) {
-  return walletStore.get(userId);
-}
 
 const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
