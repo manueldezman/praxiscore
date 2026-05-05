@@ -355,6 +355,12 @@
   line-height: 1.6;
 }
 
+.dashboardGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-lg);
+}
+
 .loadingScreen {
   min-height: 100vh;
   display: flex;

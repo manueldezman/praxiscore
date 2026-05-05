@@ -1,0 +1,148 @@
+.container {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-xl);
+}
+
+.title {
+  font-family: 'Syne', sans-serif;
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-lg) 0;
+}
+
+.tree {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.node {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.nodeHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background: var(--surface-2);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.nodeHeader:hover {
+  background: var(--surface-3);
+}
+
+.expandIcon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.ruleName {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.inactive {
+  color: var(--text-muted);
+  text-decoration: line-through;
+}
+
+.ruleTrigger {
+  font-size: 14px;
+}
+
+.ruleAllocation {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.ruleToken {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 2px 6px;
+  background: var(--surface);
+  border-radius: var(--radius-sm);
+}
+
+.pausedBadge {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-muted);
+  background: var(--surface);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+}
+
+.children {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding-left: var(--space-md);
+  border-left: 1px solid var(--border);
+  margin-left: var(--space-sm);
+}
+
+.conditionProgress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding-left: calc(var(--space-md) + 20px);
+}
+
+.progressContainer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.progressLabel {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.progressLabelName {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.progressLabelValue {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+.progressBar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progressFill {
+  height: 100%;
+  background: var(--accent);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.progressFillWarning {
+  background: var(--warning);
+}

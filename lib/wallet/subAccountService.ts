@@ -52,7 +52,9 @@ export async function getAllTokenBalances(publicKey: string): Promise<Record<str
     const connection = new Connection(process.env.SOLANA_RPC_URL || 'https://api.devnet.solana.com');
     const pubKey = new PublicKey(publicKey);
 
-    const tokenAccounts = await connection.getParsedTokenAccountsByOwner(pubKey);
+    const tokenAccounts = await connection.getParsedTokenAccountsByOwner(pubKey, {
+      programId: TOKEN_PROGRAM_ID,
+    });
 
     const balances: Record<string, number> = {};
 

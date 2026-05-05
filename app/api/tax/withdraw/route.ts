@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { supabaseAdmin } from '@/lib/db/supabase';
-import { getWalletForUser } from '@/lib/wallet/walletService';
+import { recoverKeypair } from '@/lib/wallet/walletService';
 
 export async function POST(req: NextRequest) {
   try {
@@ -34,10 +34,17 @@ export async function POST(req: NextRequest) {
     }
 
     // Get wallet keypair (decrypt)
-    const wallet = getWalletForUser(userId);
-    if (!wallet) {
+    const { data: wallet, error: walletError } = await supabaseAdmin
+      .from('wallets')
+      .select('encrypted_secret_key')
+      .eq('user_id', userId)
+      .single();
+
+    if (walletError || !wallet) {
       return NextResponse.json({ error: 'Wallet not found' }, { status: 404 });
     }
+
+    const keypair = recoverKeypair(wallet.encrypted_secret_key);
 
     // TODO: Integrate with Cloak SDK for withdrawal
     // const cloak = new Cloak(wallet.secretKey);

@@ -1,9 +1,10 @@
 'use client';
 
 import { useSession, signIn } from 'next-auth/react';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import { usePhaseOrchestrator } from '@/lib/hooks/usePhaseOrchestrator';
+import { supabase } from '@/lib/db/supabase';
 import Navbar from '@/components/layout/Navbar';
 import SimulateZone from '@/components/hero/SimulateZone';
 import FlowAnimation from '@/components/animation/FlowAnimation';
@@ -11,6 +12,9 @@ import BucketCard from '@/components/buckets/BucketCard';
 import LoginModal from '@/components/auth/LoginModal';
 import TaxPanel from '@/components/tax/TaxPanel';
 import WalletDisplay from '@/components/layout/WalletDisplay';
+import RuleTree, { Rule as RuleTreeRule } from '@/components/rules/RuleTree';
+import ExecutionHistory from '@/components/rules/ExecutionHistory';
+import type { Execution } from '@/components/rules/ExecutionHistory';
 import type { AllocationResult, BucketDefinition } from '@/lib/types';
 import { DEFAULT_BUCKETS, BUCKET_COLOR_PALETTE } from '@/lib/types';
 import styles from './AppPage.module.css';
@@ -40,6 +44,9 @@ export default function AppPage() {
   const [complianceData, setComplianceData] = useState<{ summary: string } | null>(null);
   const [loadingCompliance, setLoadingCompliance] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+  const [rules, setRules] = useState<RuleTreeRule[]>([]);
+  const [recentExecutions, setRecentExecutions] = useState<Execution[]>([]);
+  const [loadingRules, setLoadingRules] = useState(true);
 
   const handleSimulate = useCallback(async (amount: number, allocationResult: AllocationResult) => {
     setExecuting(true);
@@ -78,6 +85,174 @@ export default function AppPage() {
 
   const showBuckets = ['settle', 'reveal', 'complete'].includes(simulation.phase);
   const showReplay = simulation.phase === 'complete' || simulation.phase === 'reveal';
+
+  // Load rules and setup Realtime subscription
+  useEffect(() => {
+    if (!session?.user?.userId) return;
+    const userId = session.user.userId;
+
+    const loadRules = async () => {
+      setLoadingRules(true);
+      try {
+        // Load rules with conditions
+        const { data: rulesData } = await supabase
+          .from('rules')
+          .select(`
+            *,
+            rule_conditions (*)
+          `)
+          .eq('user_id', userId)
+          .order('created_at', { ascending: false });
+
+        // Transform to RuleTree format
+        const transformedRules: RuleTreeRule[] = (rulesData || []).map(rule => ({
+          id: rule.id,
+          name: rule.name,
+          trigger_type: rule.trigger_type,
+          allocation_type: rule.allocation_type,
+          percent: rule.percent,
+          fixed_amount: rule.fixed_amount,
+          token: rule.token,
+          is_active: rule.is_active,
+          parent_rule_id: rule.parent_rule_id,
+          conditionProgress: rule.rule_conditions ? {
+            annualCap: rule.rule_conditions.annual_cap,
+            annualUsed: 0, // TODO: calculate from executions
+            monthlyCap: rule.rule_conditions.monthly_cap,
+            monthlyUsed: 0, // TODO: calculate from executions
+          } : undefined,
+        }));
+
+        // Build parent-child relationships
+        const ruleMap = new Map<string, RuleTreeRule>();
+        const roots: RuleTreeRule[] = [];
+
+        transformedRules.forEach(rule => {
+          ruleMap.set(rule.id, { ...rule, children: [] });
+        });
+
+        transformedRules.forEach(rule => {
+          const ruleWithChildren = ruleMap.get(rule.id)!;
+          if (rule.parent_rule_id) {
+            const parent = ruleMap.get(rule.parent_rule_id);
+            if (parent) {
+              parent.children = parent.children || [];
+              parent.children.push(ruleWithChildren);
+            }
+          } else {
+            roots.push(ruleWithChildren);
+          }
+        });
+
+        setRules(roots);
+
+        // Load recent executions
+        const { data: executions } = await supabase
+          .from('rule_executions')
+          .select('*')
+          .eq('user_id', userId)
+          .order('executed_at', { ascending: false })
+          .limit(10);
+
+        setRecentExecutions((executions || []).map(exec => ({
+          id: exec.id,
+          amount: exec.amount,
+          token: exec.token,
+          destination: exec.destination,
+          tx_signatures: exec.tx_signatures,
+          executed_at: exec.executed_at,
+          status: exec.status as 'success' | 'failed' | 'capped',
+        })));
+      } catch (error) {
+        console.error('Failed to load rules:', error);
+      } finally {
+        setLoadingRules(false);
+      }
+    };
+
+    loadRules();
+
+    // Setup Realtime subscription for rule_executions
+    const subscription = supabase
+      .channel('rule_executions')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'rule_executions',
+          filter: `user_id=eq.${userId}`,
+        },
+        (payload) => {
+          const newExecution: Execution = {
+            id: payload.new.id,
+            amount: payload.new.amount,
+            token: payload.new.token,
+            destination: payload.new.destination,
+            tx_signatures: payload.new.tx_signatures,
+            executed_at: payload.new.executed_at,
+            status: payload.new.status as 'success' | 'failed' | 'capped',
+          };
+          setRecentExecutions(prev => [newExecution, ...prev].slice(0, 10));
+          refreshRules(userId); // Refresh condition progress
+        }
+      )
+      .subscribe();
+
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [session]);
+
+  const refreshRules = async (userId: string) => {
+    const { data: rulesData } = await supabase
+      .from('rules')
+      .select(`
+        *,
+        rule_conditions (*)
+      `)
+      .eq('user_id', userId);
+
+    // Same transformation logic as above
+    const transformedRules: RuleTreeRule[] = (rulesData || []).map(rule => ({
+      id: rule.id,
+      name: rule.name,
+      trigger_type: rule.trigger_type,
+      allocation_type: rule.allocation_type,
+      percent: rule.percent,
+      fixed_amount: rule.fixed_amount,
+      token: rule.token,
+      is_active: rule.is_active,
+      conditionProgress: rule.rule_conditions ? {
+        annualCap: rule.rule_conditions.annual_cap,
+        annualUsed: 0,
+        monthlyCap: rule.rule_conditions.monthly_cap,
+        monthlyUsed: 0,
+      } : undefined,
+    }));
+
+    const ruleMap = new Map<string, RuleTreeRule>();
+    const roots: RuleTreeRule[] = [];
+
+    transformedRules.forEach(rule => {
+      ruleMap.set(rule.id, { ...rule, children: [] });
+    });
+
+    transformedRules.forEach(rule => {
+      const ruleWithChildren = ruleMap.get(rule.id)!;
+      if (rule.parent_rule_id) {
+        const parent = ruleMap.get(rule.parent_rule_id);
+        if (parent) {
+          parent.children = parent.children || [];
+          parent.children.push(ruleWithChildren);
+        }
+      } else {
+        roots.push(ruleWithChildren);
+      }
+    });
+
+    setRules(roots);
+  };
 
   // Unauthenticated state
   if (status === 'loading') {
@@ -231,6 +406,14 @@ export default function AppPage() {
             <div className={styles.idleState}>
               <div className={styles.idleIcon}>◎</div>
               <p className={styles.idleText}>Enter an amount and a rule to simulate your next paycheck</p>
+            </div>
+          )}
+
+          {/* Dashboard - Rules and Execution History */}
+          {session && !loadingRules && (
+            <div className={styles.dashboardGrid}>
+              <RuleTree rules={rules} />
+              <ExecutionHistory executions={recentExecutions} />
             </div>
           )}
         </main>

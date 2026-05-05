@@ -61,8 +61,8 @@ export default function OnboardingStep1() {
             <div className="mt-6">
               <h3 className="text-lg font-semibold mb-4">Preview</h3>
               <ParsedPreview
-                rules={parsedRules}
-                allocationResult={allocationResult}
+                allocations={allocationResult.rules}
+                warnings={allocationResult.warnings}
               />
             </div>
           )}

@@ -9,8 +9,10 @@ export const inngest = new Inngest({ id: 'praxicore' });
  * Triggered when income arrives at user's wallet
  */
 export const onIncomeArrival = inngest.createFunction(
-  { id: 'on-income-arrival' },
-  { event: 'inflow/arrived' },
+  {
+    id: 'on-income-arrival',
+    triggers: [{ event: 'inflow/arrived' }],
+  },
   async ({ event, step }) => {
     const { userId, amount, token, txSignature } = event.data;
 
@@ -93,8 +95,10 @@ export const onIncomeArrival = inngest.createFunction(
  * Execute nested rules after parent rule execution
  */
 export const executeNestedRules = inngest.createFunction(
-  { id: 'execute-nested-rules' },
-  { event: 'nested-rules/execute' },
+  {
+    id: 'execute-nested-rules',
+    triggers: [{ event: 'nested-rules/execute' }],
+  },
   async ({ event }) => {
     const { userId, parentExecutions } = event.data;
 
@@ -104,7 +108,7 @@ export const executeNestedRules = inngest.createFunction(
       .select('*')
       .eq('user_id', userId)
       .eq('is_active', true)
-      .is('parent_rule_id', 'not', null);
+      .not('parent_rule_id', 'is', null);
 
     if (error || !nestedRules || nestedRules.length === 0) {
       return { success: true, message: 'No nested rules to execute' };
