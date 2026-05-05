@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { useSession, signIn, signOut } from 'next-auth/react';
 import ThemeToggle from '@/components/ui/ThemeToggle';
 import { truncateAddress } from '@/lib/wallet/walletService';
@@ -36,8 +37,11 @@ function NavDropdown({ label, children }: NavDropdownProps) {
 export default function Navbar() {
   const { data: session } = useSession();
   const walletPubkey = (session?.user as { walletPublicKey?: string })?.walletPublicKey;
+  const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loginModalOpen, setLoginModalOpen] = useState(false);
+
+  const isAppPage = pathname === '/app';
 
   return (
     <>
@@ -85,7 +89,9 @@ export default function Navbar() {
                     {truncateAddress(walletPubkey, 4)}
                   </span>
                 )}
-                <Link href="/app" className={styles.ctaBtn}>Open App</Link>
+                {!isAppPage && (
+                  <Link href="/app" className={styles.ctaBtn}>Open App</Link>
+                )}
                 <button onClick={() => signOut()} className={styles.signOutBtn}>
                   Sign out
                 </button>
@@ -158,9 +164,11 @@ export default function Navbar() {
                       {truncateAddress(walletPubkey, 4)}
                     </span>
                   )}
-                  <Link href="/app" className={styles.mobileCtaBtn} onClick={() => setMobileMenuOpen(false)}>
-                    Open App
-                  </Link>
+                  {!isAppPage && (
+                    <Link href="/app" className={styles.mobileCtaBtn} onClick={() => setMobileMenuOpen(false)}>
+                      Open App
+                    </Link>
+                  )}
                   <button
                     onClick={() => { signOut(); setMobileMenuOpen(false); }}
                     className={styles.mobileSignOutBtn}
