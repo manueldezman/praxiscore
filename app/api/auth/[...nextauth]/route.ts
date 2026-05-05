@@ -120,6 +120,26 @@ export const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   secret: process.env.NEXTAUTH_SECRET ?? 'praxicore-dev-secret',
+  events: {
+    async signIn({ user }) {
+      // Check if user has any rules, redirect to onboarding if not
+      try {
+        const { data: rules, error } = await supabaseAdmin
+          .from('rules')
+          .select('id')
+          .eq('user_id', user.id)
+          .limit(1);
+
+        if (!error && (!rules || rules.length === 0)) {
+          // User has no rules, they need onboarding
+          // This will be handled by middleware or client-side redirect
+          console.log('[Auth] User has no rules, onboarding needed');
+        }
+      } catch (e) {
+        console.error('[Auth] Failed to check rules:', e);
+      }
+    },
+  },
 };
 
 const handler = NextAuth(authOptions);

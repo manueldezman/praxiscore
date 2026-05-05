@@ -1,0 +1,99 @@
+.triggerCard {
+  background: white;
+  border: 2px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-xl);
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.triggerCard:hover {
+  border-color: var(--accent);
+}
+
+.triggerCardSelected {
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+
+.triggerIcon {
+  font-size: 32px;
+  margin-bottom: var(--space-md);
+}
+
+.triggerLabel {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.triggerDescription {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.optionsPanel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.optionsTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-md) 0;
+}
+
+.recurrenceOptions {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.recurrenceBtn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.recurrenceBtn:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.recurrenceBtnSelected {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.datetimeInput {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  width: 100%;
+}
+
+.datetimeInput:focus {
+  outline: none;
+  border-color: var(--accent);
+}

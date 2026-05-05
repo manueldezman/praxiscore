@@ -1,0 +1,117 @@
+.summarySection {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.sectionTitle {
+  font-family: 'Syne', sans-serif;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-md) 0;
+}
+
+.ruleText {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  color: var(--text-primary);
+  background: var(--surface-2);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-md);
+  font-style: italic;
+}
+
+.allocations {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.allocationItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.allocationItem:last-child {
+  border-bottom: none;
+}
+
+.allocationBucket {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.allocationAmount {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.walletList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.walletItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-sm) 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.walletItem:last-child {
+  border-bottom: none;
+}
+
+.walletLabel {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.walletAddress {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.walletSkipped {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+.managedBadge {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--surface-2);
+  padding: 4px 8px;
+  border-radius: var(--radius-sm);
+}
+
+.triggerInfo {
+  display: flex;
+  align-items: center;
+}
+
+.triggerType {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--text-primary);
+}

@@ -1,0 +1,118 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.ruleWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.ruleTextarea {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  color: var(--text-primary);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  resize: vertical;
+  transition: border-color 0.2s ease;
+}
+
+.ruleTextarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.ruleTextarea::placeholder {
+  color: var(--text-muted);
+}
+
+.inputError {
+  border-color: var(--error);
+}
+
+.errorText {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  color: var(--error);
+  margin: 0;
+}
+
+.presets {
+  display: flex;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.presetBtn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.presetBtn:hover {
+  border-color: var(--accent);
+  color: var(--text-primary);
+}
+
+.presetBtnSelected {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+
+.simulateBtn {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-xl);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.simulateBtn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.simulateBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.executing {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.executingDot {
+  width: 8px;
+  height: 8px;
+  background: white;
+  border-radius: 50%;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.3;
+  }
+}
