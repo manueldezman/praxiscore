@@ -1,8 +1,13 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { getServerSession } from 'next-auth';
-import { authOptions } from './api/auth/[...nextauth]/route';
+import { authOptions } from '@/lib/auth/authOptions';
 import { supabaseAdmin } from '@/lib/db/supabase';
+
+export const config = {
+  runtime: 'nodejs',
+  matcher: ['/app', '/app/:path*', '/settings/:path*', '/onboarding/:path*'],
+};
 
 export async function middleware(req: NextRequest) {
   const session = await getServerSession(authOptions);
@@ -38,7 +43,3 @@ export async function middleware(req: NextRequest) {
 
   return NextResponse.next();
 }
-
-export const config = {
-  matcher: ['/app/:path*', '/settings/:path*', '/onboarding/:path*'],
-};
