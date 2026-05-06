@@ -6,7 +6,7 @@ import { supabaseAdmin } from '@/lib/db/supabase';
 
 export const config = {
   runtime: 'nodejs',
-  matcher: ['/app', '/app/:path*', '/settings/:path*', '/onboarding/:path*'],
+  matcher: ['/app', '/app/:path*', '/settings/:path*', '/onboarding/:path*', '/audit/:path*'],
 };
 
 export async function middleware(req: NextRequest) {
@@ -15,6 +15,11 @@ export async function middleware(req: NextRequest) {
 
   // Allow access to public routes
   if (req.nextUrl.pathname === '/' || req.nextUrl.pathname.startsWith('/api/auth')) {
+    return NextResponse.next();
+  }
+
+  // Auditor page is public but requires valid viewing key
+  if (req.nextUrl.pathname.startsWith('/audit/')) {
     return NextResponse.next();
   }
 
@@ -35,6 +40,25 @@ export async function middleware(req: NextRequest) {
       if (!rules || rules.length === 0) {
         // User has no rules, redirect to onboarding
         return NextResponse.redirect(new URL('/onboarding', req.url));
+      }
+    } catch (error) {
+      // If check fails, allow access
+    }
+  }
+
+  // Business-only routes check
+  const businessRoutes = ['/app/payroll', '/app/batch', '/app/teams'];
+  if (businessRoutes.some(route => req.nextUrl.pathname.startsWith(route))) {
+    try {
+      const { data: user } = await supabaseAdmin
+        .from('users')
+        .select('account_type')
+        .eq('id', userId)
+        .single();
+
+      if (user?.account_type !== 'business') {
+        // Not a business account, redirect to dashboard
+        return NextResponse.redirect(new URL('/app', req.url));
       }
     } catch (error) {
       // If check fails, allow access

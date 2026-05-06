@@ -43,3 +43,7 @@ next-env.d.ts
 
 # coding agent configuration.
 litellm_config.yaml
+
+# product handover documents
+product-handover.txt
+praxicore-handover.docx

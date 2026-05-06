@@ -85,6 +85,18 @@ export const authOptions: NextAuthOptions = {
 
     async jwt({ token, user }) {
       if (user?.id) {
+        token.userId = user.id;
+
+        const { data: userData } = await supabaseAdmin
+          .from('users')
+          .select('account_type')
+          .eq('id', user.id)
+          .single();
+
+        if (userData) {
+          token.accountType = userData.account_type;
+        }
+
         const { data: wallet } = await supabaseAdmin
           .from('wallets')
           .select('public_key')
@@ -93,16 +105,18 @@ export const authOptions: NextAuthOptions = {
 
         if (wallet) {
           token.walletPublicKey = wallet.public_key;
-          token.userId = user.id;
         }
       }
       return token;
     },
 
     async session({ session, token }) {
-      if (session.user && token.walletPublicKey) {
-        (session.user as { walletPublicKey?: string }).walletPublicKey = token.walletPublicKey as string;
+      if (session.user) {
         (session.user as { userId?: string }).userId = token.userId as string;
+        (session.user as { accountType?: string }).accountType = token.accountType as string;
+        if (token.walletPublicKey) {
+          (session.user as { walletPublicKey?: string }).walletPublicKey = token.walletPublicKey as string;
+        }
       }
       return session;
     },
