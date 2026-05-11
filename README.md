@@ -1,4 +1,4 @@
-# Praxicore — Private Financial Execution Engine
+# Praxiscore — Private Financial Execution Engine
 
 > "Your money behaves the way you planned — automatically and privately."
 
@@ -6,7 +6,7 @@
 
 Remote workers and contractors paid in crypto face a painful manual loop: receive funds, manually split to savings, pay tax reserves, buy target assets. Every transfer is permanently public on-chain — salaries get indexed, spending patterns get parsed.
 
-**Praxicore closes this gap.** Define rules once in plain language. Every incoming payment is automatically split and privately routed to Spend, Save, Invest, and Tax buckets — the moment funds arrive — with zero public trail.
+**Praxiscore closes this gap.** Define rules once in plain language. Every incoming payment is automatically split and privately routed to Spend, Save, Invest, and Tax buckets — the moment funds arrive — with zero public trail.
 
 ## How Cloak SDK Is Used
 
